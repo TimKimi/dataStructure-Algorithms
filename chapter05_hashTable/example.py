@@ -46,7 +46,12 @@ class ChainingHashTable:
         else:
             #若索引位置不为空，则遍历链表找到合适位置插入新节点
             current = self.hash_table[index]
-            while current.next:
+            while current:
+                if current.key == key:
+                    current.value = value  #更新现有键的值
+                    return
+                if current.next is None:
+                    break
                 current = current.next
             current.next = Node(key, value)
     
@@ -60,7 +65,25 @@ class ChainingHashTable:
             if current.key == key:
                 return current.value  #返回键对应的值
             current = current.next
-        return None  #见不存在于散列表中
+        return None  #键不存在于散列表中
+
+    def delete(self, key):
+        """
+        从散列表中删除给定键的值
+        """
+        index = self._hash(key)  #计算散列索引
+        current = self.hash_table[index]
+        prev = None
+        while current:
+            if current.key == key:
+                if prev:
+                    prev.next = current.next
+                else:
+                    self.hash_table[index] = current.next
+                return
+            prev = current
+            current = current.next
+
 
 #2.闭散列(closed hash)  也称为开放定址法(open addressing)
 # 必须符合内存空间大于键值数量
@@ -106,29 +129,30 @@ class LinearProbeHashTable:
                 key, value = item
                 self.insert(key, value)  #重新插入已有键值对
 
-        def insert(self, key, value):
-            """
-            向散列表中插入键值对，当装填因子达到阈值时，重新开辟地址空间
-            """
-            if self.count >= self.threshold:
-                self._resize()  #装填因子超过阈值，重新开辟地址空间
+    def insert(self, key, value):
+        """
+        向散列表中插入键值对，当装填因子达到阈值时，重新开辟地址空间
+        """
+        if self.count >= self.threshold:
+            self._resize()  #装填因子超过阈值，重新开辟地址空间
 
-            index = self._hash(key)  #计算初始索引
-            while self.hash_table[index] is not None:
-                index = self._next_index(index)  #冲突发生获取下一个索引位置
-            self.hash_table[index] = {key, value}  #插入键值对
-            self.count += 1
+        index = self._hash(key)  #计算初始索引
+        while self.hash_table[index] is not None:
+            index = self._next_index(index)  #冲突发生获取下一个索引位置
+        self.hash_table[index] = (key, value)  #插入键值对
+        self.count += 1
 
-        def search(self, key):
-            """
-            在散列表中查找给定键的值
-            """
-            index = self._hash(key)  #计算初始索引
-            while self.hash_table[index] is not None:
-                if self.hash_table[index][0] == key:
-                    return self.hash_table[index][1]  #返回键对应的值
-                index = self._next_index(index)  #冲突发生，获取下一个索引位置
-            return None  #键不存在于散列表中
+    def search(self, key):
+        """
+        在散列表中查找给定键的值
+        """
+        index = self._hash(key)  #计算初始索引
+        while self.hash_table[index] is not None:
+            if self.hash_table[index][0] == key:
+                return self.hash_table[index][1]  #返回键对应的值
+            index = self._next_index(index)  #冲突发生，获取下一个索引位置
+        return None  #键不存在于散列表中
+
 
 #////////////////////////////////////////////////////////////////////////////////
 

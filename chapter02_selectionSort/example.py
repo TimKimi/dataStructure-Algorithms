@@ -5,18 +5,18 @@
 
 #////////////////////////////////////
 
-#单向链表
+# 单向链表
 class Node:
-    def __int__(self, data):
-      self.data = data
-      self.next = None
+    def __init__(self, data): 
+        self.data = data
+        self.next = None
 
 class SinglyLinkedList:
     def __init__(self):
         self.head = None
 
     def append(self, data):
-        new_node = Node(data)
+        new_node = Node(data)  
         if not self.head:
             self.head = new_node
             return
@@ -26,7 +26,7 @@ class SinglyLinkedList:
         last_node.next = new_node
 
     def prepend(self, data):
-        new_node = Node(data)
+        new_node = Node(data)  
         new_node.next = self.head
         self.head = new_node
 
@@ -69,9 +69,10 @@ print("删除元素2:")
 sllist.delete(2)
 sllist.print_list()
 
+
 #/////////////////////////////////////
 
-#双向链表
+# 双向链表
 class Node:
     def __init__(self, data):
         self.data = data
@@ -105,37 +106,30 @@ class DoublyLinkedList:
     def delete(self, key):
         cur = self.head
         while cur:
-            if cur.data == key and cur == self.head:
-                if not cur.next:
-                    cur = None
-                    self.head = None
-                    return
+            if cur.data == key:
+                if cur == self.head:
+                    if not cur.next:
+                        self.head = None
+                    else:
+                        self.head = cur.next
+                        self.head.prev = None
                 else:
-                    nxt = cur.next
-                    cur.next = None
-                    nxt.prev = None
-                    cur = None
-                    self.head = nxt
-                    return
-            elif cur.data == key:
-                if cur.next:
-                    nxt = cur.next
-                    prv = cur.prev
-                    prv.next = nxt
-                    nxt.prev = prv
-                    cur.next = None
-                    cur.prev = None
-                    cur = None
-                    return
-                else:
-                    prv = cur.prev
-                    prv.next = None
-                    cur.prev = None
-                    cur = None
-                    return
+                    if cur.next:
+                        nxt = cur.next
+                        prv = cur.prev
+                        prv.next = nxt
+                        nxt.prev = prv
+                    else:
+                        prv = cur.prev
+                        prv.next = None
+                cur = None
+                return
             cur = cur.next
 
     def print_list(self):
+        if not self.head:
+            print("链表为空")
+            return
         cur = self.head
         while cur:
             print(cur.data)
@@ -159,15 +153,17 @@ print("删除元素2:")
 dllist.delete(2)
 dllist.print_list()
 
+
 #////////////////////////////////////////
 
-#循环链表
+# 双向链表
 class Node:
     def __init__(self, data):
         self.data = data
         self.next = None
+        self.prev = None
 
-class CircularLinkedList:
+class DoublyLinkedList:
     def __init__(self):
         self.head = None
 
@@ -175,80 +171,75 @@ class CircularLinkedList:
         new_node = Node(data)
         if not self.head:
             self.head = new_node
-            new_node.next = self.head
-        else:
-            cur = self.head
-            while cur.next != self.head:
-                cur = cur.next
-            cur.next = new_node
-            new_node.next = self.head
+            return
+        last_node = self.head
+        while last_node.next:
+            last_node = last_node.next
+        last_node.next = new_node
+        new_node.prev = last_node
 
     def prepend(self, data):
         new_node = Node(data)
         if not self.head:
             self.head = new_node
-            new_node.next = self.head
-        else:
-            cur = self.head
-            while cur.next != self.head:
-                cur = cur.next
-            new_node.next = self.head
-            self.head = new_node
-            cur.next = self.head
+            return
+        self.head.prev = new_node
+        new_node.next = self.head
+        self.head = new_node
 
     def delete(self, key):
-        if self.head is None:
-            return
-        if self.head.data == key and self.head.next == self.head:
-            self.head = None
-            return
-        prev = None
-        cur = self.head
-        while cur.next != self.head:
-            prev = cur
-            cur = cur.next
-            if cur.data == key:
-                break
-        if cur.data == key:
-            if cur == self.head:
-                prev = self.head
-                while prev.next != self.head:
-                    prev = prev.next
-                self.head = cur.next
-                prev.next = self.head
-            else:
-                prev.next = cur.next
-
-    def print_list(self):
         cur = self.head
         while cur:
-            print(cur.data, end=' ')
+            if cur.data == key:
+                if cur == self.head:
+                    if not cur.next:
+                        self.head = None
+                    else:
+                        self.head = cur.next
+                        self.head.prev = None
+                else:
+                    if cur.next:
+                        nxt = cur.next
+                        prv = cur.prev
+                        prv.next = nxt
+                        nxt.prev = prv
+                    else:
+                        prv = cur.prev
+                        prv.next = None
+                cur = None
+                return
             cur = cur.next
-            if cur == self.head:
-                break
-        print()
 
-# 使用循环链表
-cllist = CircularLinkedList()
-cllist.append(1)
-cllist.append(2)
-cllist.append(3)
-cllist.append(4)
+    def print_list(self):
+        if not self.head:
+            print("链表为空")
+            return
+        cur = self.head
+        while cur:
+            print(cur.data)
+            cur = cur.next
 
-print("打印循环链表:")
-cllist.print_list()
+# 使用双向链表
+dllist = DoublyLinkedList()
+dllist.append(1)
+dllist.append(2)
+dllist.append(3)
+dllist.append(4)
+
+print("正向打印链表:")
+dllist.print_list()
 
 print("在头部添加元素0:")
-cllist.prepend(0)
-cllist.print_list()
+dllist.prepend(0)
+dllist.print_list()
 
 print("删除元素2:")
-cllist.delete(2)
-cllist.print_list()
+dllist.delete(2)
+dllist.print_list()
 
 #/////////////////////////////
 
-#块状链表
+# 块状链表
 class BlockNode:
     def __init__(self, capacity):
         self.capacity = capacity
@@ -266,19 +257,17 @@ class BlockLinkedList:
             self.head.data[0] = data
         else:
             cur = self.head
-            while cur.next:
+            while cur:
                 empty_slot = self.find_empty_slot(cur)
                 if empty_slot is not None:
                     cur.data[empty_slot] = data
                     return
+                if not cur.next:
+                    break
                 cur = cur.next
-            empty_slot = self.find_empty_slot(cur)
-            if empty_slot is not None:
-                cur.data[empty_slot] = data
-            else:
-                new_node = BlockNode(self.block_size)
-                new_node.data[0] = data
-                cur.next = new_node
+            new_node = BlockNode(self.block_size)
+            new_node.data[0] = data
+            cur.next = new_node
 
     def find_empty_slot(self, node):
         for i in range(self.block_size):
@@ -306,6 +295,7 @@ block_list.append(5)
 
 print("打印块状链表:")
 block_list.print_list()
+
 
 #/////////////////////////////////////////////////
 
@@ -373,8 +363,11 @@ class LinkedList:
                     min_node = next_node
                 next_node = next_node.next
             
-            # Swap data of current node and min_node
-            current.data, min_node.data = min_node.data, current.data
+            # Move min_node to current position
+            if min_node != current:
+                temp_data = current.data
+                current.data = min_node.data
+                min_node.data = temp_data
             current = current.next
 
 # 创建一个单向链表并添加一些元素
@@ -395,6 +388,7 @@ ll.selection_sort()
 # 显示排序后链表
 print("排序后链表:")
 ll.display()
+
 # 输出结果
 # 未排序链表:
 # 64 -> 25 -> 12 -> 22 -> 11 -> None

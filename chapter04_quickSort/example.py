@@ -25,6 +25,7 @@ def merge(left, right):
             j += 1
     result += left[i:]
     result += right[j:]
+    return result
 '''分解'''
 def merge_sort(arr):
     """
@@ -49,28 +50,37 @@ def merge_sort(arr):
 #快速排序(in-place方式：用以节省内存空间)
 
 #分区函数(挖坑法)
+import random
+
 def partition(arr, low, high):
-    #选择第一个元素作为基准
-    pivot = arr[low]
-    #挖坑初始位置
+    # 随机选择基准元素
+    pivot_index = random.randint(low, high)
+    pivot = arr[pivot_index]
+    
+    # 将基准元素交换到数组的第一个位置
+    arr[low], arr[pivot_index] = arr[pivot_index], arr[low]
+    
+    # 挖坑初始位置
     left = low
     right = high
 
     while left < right:
-        #从右边开始找小于基准的元素
+        # 从右边开始找小于基准的元素
         while left < right and arr[right] >= pivot:
             right -= 1
-        #将小于基准的元素填入左边的坑
+        # 将小于基准的元素填入左边的坑
         arr[left] = arr[right]
-        #从左边开始找大于基准的元素
+        # 从左边开始找大于基准的元素
         while left < right and arr[left] <= pivot:
             left += 1
-        #将大于基准的元素填入右边的坑
+        # 将大于基准的元素填入右边的坑
         arr[right] = arr[left]
-    #基准元素放入最后的坑
+    
+    # 基准元素放入最后的坑
     arr[left] = pivot
-    #返回基准元素的索引
+    # 返回基准元素的索引
     return left
+
 
 def quicksort(arr, low, high):
     if low < high:
@@ -84,7 +94,57 @@ def quicksort(arr, low, high):
 #算法性能分析：时间复杂度O(n\log_2{n})  空间复杂度O(\log_2{n})
 
 #测试代码
-array = [2, 6, 79, 34, 68, 46]
-n = len(array)
-quicksort(array, 0, n - 1)
-print("排序后的数组:", array)
+import unittest
+
+class TestSortingAlgorithms(unittest.TestCase):
+
+    def test_merge(self):
+        # 测试合并两个有序数组的函数
+        self.assertEqual(merge([1, 3, 5], [2, 4, 6]), [1, 2, 3, 4, 5, 6])
+        self.assertEqual(merge([1, 1, 1], [2, 2, 2]), [1, 1, 1, 2, 2, 2])
+        self.assertEqual(merge([], []), [])
+        self.assertEqual(merge([1], []), [1])
+        self.assertEqual(merge([], [1]), [1])
+        self.assertEqual(merge([1, 2, 3], [4, 5, 6]), [1, 2, 3, 4, 5, 6])
+
+    def test_merge_sort(self):
+        # 测试归并排序函数
+        self.assertEqual(merge_sort([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]), [1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9])
+        self.assertEqual(merge_sort([]), [])
+        self.assertEqual(merge_sort([1]), [1])
+        self.assertEqual(merge_sort([2, 1]), [1, 2])
+        self.assertEqual(merge_sort([5, 4, 3, 2, 1]), [1, 2, 3, 4, 5])
+        self.assertEqual(merge_sort([1, 2, 3, 4, 5]), [1, 2, 3, 4, 5])
+
+    def test_partition(self):
+    # 测试分区函数
+        arr = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+        pivot_index = partition(arr, 0, len(arr) - 1)
+        print(f"Pivot index: {pivot_index}")
+        print(f"Array after partition: {arr}")
+        assert all(arr[i] <= arr[pivot_index] for i in range(pivot_index))
+        assert all(arr[i] >= arr[pivot_index] for i in range(pivot_index + 1, len(arr)))
+
+    def test_quicksort(self):
+        # 测试快速排序函数
+        arr = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+        quicksort(arr, 0, len(arr) - 1)
+        self.assertEqual(arr, [1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9])
+        arr = []
+        quicksort(arr, 0, len(arr) - 1)
+        self.assertEqual(arr, [])
+        arr = [1]
+        quicksort(arr, 0, len(arr) - 1)
+        self.assertEqual(arr, [1])
+        arr = [2, 1]
+        quicksort(arr, 0, len(arr) - 1)
+        self.assertEqual(arr, [1, 2])
+        arr = [5, 4, 3, 2, 1]
+        quicksort(arr, 0, len(arr) - 1)
+        self.assertEqual(arr, [1, 2, 3, 4, 5])
+        arr = [1, 2, 3, 4, 5]
+        quicksort(arr, 0, len(arr) - 1)
+        self.assertEqual(arr, [1, 2, 3, 4, 5])
+
+if __name__ == '__main__':
+    unittest.main()
